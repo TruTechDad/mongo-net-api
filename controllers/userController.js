@@ -45,7 +45,7 @@ module.exports = {
   // create a new user
   async createUser(req, res) {
     try {
-      const dbUserData = await user.create(req.body);
+      const dbUserData = await User.create(req.body);
       res.json(dbUserData);
     } catch (err) {
       res.status(500).json(err);
@@ -54,7 +54,7 @@ module.exports = {
   // update a user by its _id
   async updateUser(req, res) {
     try {
-      const updatedUser = await user.findOneAndUpdate(
+      const updatedUser = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $set: req }, // req.body is the data to update a user
         { new: true } // return the updated user's data
@@ -70,7 +70,7 @@ module.exports = {
   // delete a user by its _id
   async deleteUser(req, res) {
     try {
-      const deletedUser = await user.findOneAndDelete({
+      const deletedUser = await User.findOneAndDelete({
         _id: req.params.userId,
       });
       if (!deletedUser) {
@@ -84,7 +84,7 @@ module.exports = {
   // add a new friend to a user's friend list
   async addFriend(req, res) {
     try {
-      const updatedUser = await user.findOneAndUpdate(
+      const updatedUser = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $addToSet: { friends: req.params.friendId } },
         { new: true }
@@ -100,7 +100,7 @@ module.exports = {
   // delete a friend from a user's friend list
   async deleteFriend(req, res) {
     try {
-      const updatedUser = await user.findOneAndUpdate(
+      const updatedUser = await User.findOneAndUpdate(
         { _id: req.params.userId },
         { $pull: { friends: req.params.friendId } },
         { new: true }
