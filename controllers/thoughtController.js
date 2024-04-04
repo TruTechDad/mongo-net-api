@@ -1,9 +1,9 @@
-const thought = require('../models/thought');
+const Thought = require("../models/thought");
 
 const thoughtController = {
   getAllThoughts: async (req, res) => {
     try {
-      const thoughts = await thought.find().populate('reactions');
+      const thoughts = await Thought.find().populate("reactions");
       res.json(thoughts);
     } catch (err) {
       res.status(500).json(err);
@@ -13,9 +13,9 @@ const thoughtController = {
   getThoughtById: async (req, res) => {
     const { id } = req.params;
     try {
-      const thought = await thought.findById(id).populate('reactions');
+      const thought = await Thought.findById(id).populate("reactions");
       if (!thought) {
-        return res.status(404).json({ message: 'Thought not found' });
+        return res.status(404).json({ message: "Thought not found" });
       }
       res.json(thought);
     } catch (err) {
@@ -26,9 +26,10 @@ const thoughtController = {
   createThought: async (req, res) => {
     const { thoughtText, username } = req.body;
     try {
-      const thought = await thought.create({ thoughtText, username });
+      const thought = await Thought.create({ thoughtText, username });
       res.status(201).json(thought);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -37,9 +38,13 @@ const thoughtController = {
     const { id } = req.params;
     const { thoughtText } = req.body;
     try {
-      const updatedThought = await thought.findByIdAndUpdate(id, { thoughtText }, { new: true });
+      const updatedThought = await Thought.findByIdAndUpdate(
+        id,
+        { thoughtText },
+        { new: true }
+      );
       if (!updatedThought) {
-        return res.status(404).json({ message: 'Thought not found' });
+        return res.status(404).json({ message: "Thought not found" });
       }
       res.json(updatedThought);
     } catch (err) {
@@ -50,11 +55,11 @@ const thoughtController = {
   deleteThought: async (req, res) => {
     const { id } = req.params;
     try {
-      const deletedThought = await thought.findByIdAndDelete(id);
+      const deletedThought = await Thought.findByIdAndDelete(id);
       if (!deletedThought) {
-        return res.status(404).json({ message: 'Thought not found' });
+        return res.status(404).json({ message: "Thought not found" });
       }
-      res.json({ message: 'Thought deleted successfully' });
+      res.json({ message: "Thought deleted successfully" });
     } catch (err) {
       res.status(500).json(err);
     }
@@ -64,7 +69,7 @@ const thoughtController = {
     const { thoughtId } = req.params;
     const { reactionBody, username } = req.body;
     try {
-      const updatedThought = await thought.findByIdAndUpdate(
+      const updatedThought = await Thought.findByIdAndUpdate(
         thoughtId,
         { $push: { reactions: { reactionBody, username } } },
         { new: true }
@@ -78,7 +83,7 @@ const thoughtController = {
   removeReaction: async (req, res) => {
     const { thoughtId, reactionId } = req.params;
     try {
-      const updatedThought = await thought.findByIdAndUpdate(
+      const updatedThought = await Thought.findByIdAndUpdate(
         thoughtId,
         { $pull: { reactions: { _id: reactionId } } },
         { new: true }
@@ -87,8 +92,7 @@ const thoughtController = {
     } catch (err) {
       res.status(500).json(err);
     }
-  }
+  },
 };
 
 module.exports = thoughtController;
-
