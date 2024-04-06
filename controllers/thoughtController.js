@@ -6,6 +6,7 @@ const thoughtController = {
       const thoughts = await Thought.find().populate("reactions");
       res.json(thoughts);
     } catch (err) {
+      console.log(err);
       res.status(500).json(err);
     }
   },
@@ -67,13 +68,17 @@ const thoughtController = {
 
   addReaction: async (req, res) => {
     const { thoughtId } = req.params;
-    const { reactionBody, username } = req.body;
+    console.log(thoughtId);
     try {
-      const updatedThought = await Thought.findByIdAndUpdate(
-        thoughtId,
-        { $push: { reactions: { reactionBody, username } } },
-        { new: true }
+      const updatedThought = await Thought.findOneAndUpdate(
+        { _id: thoughtId },
+        { $push: { reactions: req.body } },
+        { runValidators: true, new: true }
       );
+      console.log("updatedThought", updatedThought);
+      if (!updatedThought) {
+        return res.status(404).json({ message: "Thought not found" });
+      }
       res.json(updatedThought);
     } catch (err) {
       res.status(500).json(err);

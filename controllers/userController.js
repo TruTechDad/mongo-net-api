@@ -12,9 +12,9 @@ module.exports = {
   // get a single user by its _id
   async getSingleUser(req, res) {
     try {
-      const user = await user
-        .findOne({ _id: req.params.userId })
-        .select("-__v");
+      const user = await User.findOne({ _id: req.params.userId }).select(
+        "-__v"
+      );
 
       if (!user) {
         return res.status(404).json({ message: "No user with that ID" });
@@ -56,7 +56,7 @@ module.exports = {
     try {
       const updatedUser = await User.findOneAndUpdate(
         { _id: req.params.userId },
-        { $set: req }, // req.body is the data to update a user
+        { $set: req.body }, // req.body is the data to update a user
         { new: true } // return the updated user's data
       );
       if (!updatedUser) {
